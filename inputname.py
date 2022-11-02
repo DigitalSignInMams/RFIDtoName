@@ -6,6 +6,7 @@ import os
 
 today = date.today()
 time = datetime.datetime.now()
+day_file_name = f'{today.year}-{today.month}-{today.day}.json'
 
 print(today.year, today.month, today.day)
 print(time.hour, time.minute)
@@ -13,15 +14,15 @@ print(time.hour, time.minute)
 id_file = open("ids.json", "r")
 id_file_contents = json.load(id_file)
 
-#get list of names
+
+#get list of names from the ids file
 names = []
 for id in id_file_contents:
     names.append(id_file_contents[id])
 names.sort()
 
-day_file_name = f'{today.year}-{today.month}-{today.day}.json'
 
-#access by day
+#add
 if not os.path.exists(day_file_name):
     # created json
     with open(day_file_name, "w") as day_file:
@@ -30,6 +31,8 @@ if not os.path.exists(day_file_name):
             day[name]=[]
         json.dump(day, day_file)
 
+
+#day file contents
 day = None
 with open(day_file_name, "r") as day_file:
     day = json.load(day_file)
@@ -46,11 +49,3 @@ with open(day_file_name, "w") as day_file:
     else:
         print("Not valid name!")
     json.dump(day, day_file)
-
-
-
-
-
-
-
-
