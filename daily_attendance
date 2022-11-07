@@ -1,0 +1,44 @@
+import firebase_admin
+from firebase_admin import firestore
+from firebase_admin import credentials
+from datetime import *
+import datetime
+
+cred = credentials.Certificate('mass-academy-sign-in-system-60c92728ae76.json')
+app = firebase_admin.initialize_app(cred)
+db = firestore.client()
+
+def new_sign_in(id):
+    today = date.today()
+    time = datetime.datetime.now()
+
+    curr_time = f'{time.hour}:{time.minute}'
+    day_file_name = f'{today.year}-{today.month}-{today.day}'
+    doc_ref = db.collection('daily-attendance').document(day_file_name)
+    doc = doc_ref.get()
+
+    if not doc.exists:
+        #initialize document
+        student_info_ref = db.collection('student_info').document('students')
+        student_info = student_info_ref.get().to_dict()
+        doc = {}
+        for i in student_info:
+            doc[student_info[i]["FirstName"] + " " + student_info[i]["LastName"]] = []
+        db.collection(u'daily-attendance').document(day_file_name).set(doc)
+
+    doc = doc_ref.get()
+    doc = doc.to_dict()
+    student_info_ref = db.collection('student_info').document('students')
+    student_info = student_info_ref.get().to_dict()
+    name = student_info[id]["FirstName"] + " " + student_info[id]["LastName"]
+    if len(doc[name]) in (0, 1):
+        doc[name].append(curr_time)
+        print("Signed in!")
+    else:
+        doc[name][1] = curr_time
+        print("Signed out!")
+
+    db.collection(u'daily-attendance').document(day_file_name).set(doc)
+
+id = input().strip()
+new_sign_in(id)
