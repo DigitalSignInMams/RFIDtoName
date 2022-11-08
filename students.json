@@ -1,12 +1,20 @@
 {
-    "101010":{
+    "101010":
+    {
         "FirstName": "Charles",
         "LastName": "Tang",
         "GradeNum": 11
     },
-    "111111":{
+    "111111":
+    {
         "FirstName": "David",
         "LastName": "Barsoum",
+        "GradeNum": 11
+    },
+    "100000":
+    {
+        "FirstName": "Tarun",
+        "LastName": "Eswar",
         "GradeNum": 11
     }
 }

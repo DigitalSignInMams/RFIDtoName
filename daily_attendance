@@ -3,12 +3,16 @@ from firebase_admin import firestore
 from firebase_admin import credentials
 from datetime import *
 import datetime
+import updatestudents
 
-cred = credentials.Certificate('mass-academy-sign-in-system-60c92728ae76.json')
-app = firebase_admin.initialize_app(cred)
-db = firestore.client()
 
-def new_sign_in(id):
+def new_scan(id):
+    cred = credentials.Certificate('mass-academy-sign-in-system-60c92728ae76.json')
+    app = firebase_admin.initialize_app(cred)
+    db = firestore.client()
+
+    updatestudents.initialize_student_info(cred, app, db)
+
     today = date.today()
     time = datetime.datetime.now()
 
@@ -31,9 +35,14 @@ def new_sign_in(id):
     student_info_ref = db.collection('student_info').document('students')
     student_info = student_info_ref.get().to_dict()
     name = student_info[id]["FirstName"] + " " + student_info[id]["LastName"]
-    if len(doc[name]) in (0, 1):
+    if name not in doc.keys():
+        doc[name] = [curr_time]
+    elif len(doc[name])==0:
         doc[name].append(curr_time)
         print("Signed in!")
+    elif len(doc[name])==1:
+        doc[name].append(curr_time)
+        print("Signed out!")
     else:
         doc[name][1] = curr_time
         print("Signed out!")
@@ -41,4 +50,4 @@ def new_sign_in(id):
     db.collection(u'daily-attendance').document(day_file_name).set(doc)
 
 id = input().strip()
-new_sign_in(id)
+new_scan(id)
